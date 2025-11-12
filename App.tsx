@@ -26,7 +26,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-sans">
       <header className="mb-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-amber-400 tracking-wider">Cờ Chiến Trận</h1>
-        <p className="text-gray-400">Một biến thể cờ vua chiến thuật mới</p>
+        <p className="text-gray-400">Bản quyền thuộc về Nguyễn Thành Đạt</p>
       </header>
 
       <main className="flex flex-col lg:flex-row items-center lg:items-start gap-8 w-full max-w-7xl mx-auto">
@@ -52,10 +52,6 @@ const App: React.FC = () => {
           />
         </div>
       </main>
-      
-      <footer className="mt-8 text-center text-gray-500 text-sm">
-        <p>Phát triển bởi Nguyễn Thành Đạt</p>
-      </footer>
 
       {showRules && <RulesModal onClose={() => setShowRules(false)} />}
     </div>
