@@ -41,7 +41,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
               <li>
                 <div className='font-bold'>Cung thủ ({pieces.archer})</div>
                 <ul className='list-disc list-inside ml-4'>
-                    <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
+                    <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào (tới ô trống).</li>
                     <li><strong>Kỹ năng (Bắn tên):</strong> Nếu không di chuyển, Cung thủ có thể bắn một quân địch ở khoảng cách chính xác hai ô. Lượt đi sẽ kết thúc sau khi bắn.</li>
                 </ul>
               </li>

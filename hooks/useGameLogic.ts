@@ -5,6 +5,28 @@ import { produce } from 'immer';
 
 // Utility to check deep equality for positions
 const posEquals = (a: Position | null, b: Position | null) => a && b && a.row === b.row && a.col === b.col;
+const isValidPosition = (row: number, col: number) => row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
+const getOpponent = (player: Player) => player === Player.White ? Player.Black : Player.White;
+
+const canAxemanUseAbility = (pos: Position, currentBoard: BoardState): boolean => {
+    const piece = currentBoard[pos.row][pos.col];
+    if (!piece || piece.type !== PieceType.Axeman) {
+        return false;
+    }
+    const opponent = getOpponent(piece.player);
+    for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            const r = pos.row + dr;
+            const c = pos.col + dc;
+            if (isValidPosition(r, c) && currentBoard[r][c]?.player === opponent) {
+                return true; // Found an enemy
+            }
+        }
+    }
+    return false; // No enemies nearby
+};
+
 
 export const useGameLogic = () => {
   const [board, setBoard] = useState<BoardState>(INITIAL_BOARD);
@@ -43,10 +65,6 @@ export const useGameLogic = () => {
     setMoveLimit(limit);
   }, []);
   
-  const isValidPosition = (row: number, col: number) => row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
-
-  const getOpponent = (player: Player) => player === Player.White ? Player.Black : Player.White;
-
   const getValidMovesForPiece = (pos: Position, currentBoard: BoardState): Position[] => {
     const moves: Position[] = [];
     const piece = currentBoard[pos.row][pos.col];
@@ -80,6 +98,19 @@ export const useGameLogic = () => {
             });
             break;
         case PieceType.Archer:
+            const archerDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+            archerDirections.forEach(([dr, dc]) => {
+                const r = row + dr;
+                const c = col + dc;
+                if (isValidPosition(r, c)) {
+                    const targetPiece = currentBoard[r][c];
+                    // Archer can only move to empty squares. Capture is a special ability.
+                    if (targetPiece === null) {
+                        moves.push({ row: r, col: c });
+                    }
+                }
+            });
+            break;
         case PieceType.Axeman:
         case PieceType.Bomber:
             // All move 1 square in 8 directions
@@ -226,7 +257,7 @@ export const useGameLogic = () => {
 
     if (selectedPiece) {
         if (posEquals(selectedPiece, clickedPos)) {
-            if (pieceAtClick?.type === PieceType.Axeman) {
+            if (pieceAtClick?.type === PieceType.Axeman && canAxemanUseAbility(selectedPiece, board)) {
                 executeAxemanSwing(selectedPiece);
             } else {
                 setSelectedPiece(null);
