@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PIECE_EMOJI } from '../constants';
 import { Player } from '../types';
@@ -45,17 +46,17 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                 </ul>
               </li>
               <li>
-                <div className='font-bold'>Lính rìu ({pieces.axeman})</div>
+                <div className='font-bold'>Lính búa ({pieces.axeman})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Vung rìu):</strong> Nếu không di chuyển, Lính rìu có thể tấn công tất cả quân địch trong vùng 3x3 xung quanh nó. Để kích hoạt, hãy nhấp vào Lính rìu một lần nữa sau khi đã chọn.</li>
+                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 xung quanh nó. Để kích hoạt, hãy nhấp vào Lính búa một lần nữa sau khi đã chọn.</li>
                 </ul>
               </li>
               <li>
                 <div className='font-bold'>Lính cảm tử ({pieces.bomber})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Cảm tử):</strong> Khi bị một quân địch tiêu diệt, Lính cảm tử sẽ phát nổ và kéo theo kẻ địch đó chết cùng.</li>
+                    <li><strong>Kỹ năng (Cảm tử):</strong> Khi bị một quân địch <strong>di chuyển vào ô để tiêu diệt</strong>, Lính cảm tử sẽ phát nổ và loại bỏ cả quân địch đó. Kỹ năng này không kích hoạt nếu Lính cảm tử bị tiêu diệt bởi kỹ năng tầm xa (Cung thủ) hoặc kỹ năng đặc biệt khác (Kiếm sĩ, Lính búa).</li>
                 </ul>
               </li>
             </ul>

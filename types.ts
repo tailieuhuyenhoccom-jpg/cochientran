@@ -1,3 +1,4 @@
+
 export enum Player {
   White = 'white',
   Black = 'black',
@@ -7,7 +8,7 @@ export enum PieceType {
   Hero = 'hero',       // Hiệp sĩ
   Horseman = 'horseman', // Kỵ binh
   Archer = 'archer',     // Cung thủ
-  Axeman = 'axeman',     // Lính rìu
+  Axeman = 'axeman',     // Lính búa
   Bomber = 'bomber',     // Lính cảm tử
 }
 
