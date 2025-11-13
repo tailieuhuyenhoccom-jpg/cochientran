@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Board from './components/Board';
 import GameInfo from './components/GameInfo';
 import RulesModal from './components/RulesModal';
+import AnimationLayer from './components/AnimationLayer';
 import { useGameLogic } from './hooks/useGameLogic';
 
 const App: React.FC = () => {
@@ -16,8 +17,13 @@ const App: React.FC = () => {
     pieceCounts,
     moveCount,
     moveLimit,
+    animation,
     handleSquareClick,
     resetGame,
+    undoMove,
+    canUndo,
+    stats,
+    resetStats,
   } = useGameLogic();
 
   const [showRules, setShowRules] = useState(false);
@@ -31,13 +37,16 @@ const App: React.FC = () => {
 
       <main className="flex flex-col lg:flex-row items-center lg:items-start gap-8 w-full max-w-7xl mx-auto">
         <div className="flex-grow flex items-center justify-center w-full lg:w-auto">
-          <Board
-            board={board}
-            selectedPiece={selectedPiece}
-            validMoves={validMoves}
-            specialAbilityTargets={specialAbilityTargets}
-            onSquareClick={handleSquareClick}
-          />
+          <div className="relative w-full max-w-2xl">
+            <Board
+              board={board}
+              selectedPiece={selectedPiece}
+              validMoves={validMoves}
+              specialAbilityTargets={specialAbilityTargets}
+              onSquareClick={handleSquareClick}
+            />
+            <AnimationLayer animation={animation} />
+          </div>
         </div>
         <div className="w-full lg:w-auto">
           <GameInfo
@@ -49,6 +58,10 @@ const App: React.FC = () => {
             moveLimit={moveLimit}
             onNewGame={resetGame}
             onShowRules={() => setShowRules(true)}
+            onUndo={undoMove}
+            canUndo={canUndo}
+            stats={stats}
+            onResetStats={resetStats}
           />
         </div>
       </main>

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { BoardState, Piece, PieceType, Player, Position, GameState } from '../types';
+import { BoardState, Piece, PieceType, Player, Position, GameState, Animation, AnimationType, GameStats } from '../types';
 import { INITIAL_BOARD, BOARD_SIZE } from '../constants';
 import { produce } from 'immer';
 
@@ -27,6 +27,31 @@ const canAxemanUseAbility = (pos: Position, currentBoard: BoardState): boolean =
     return false; // No enemies nearby
 };
 
+const STATS_STORAGE_KEY = 'chienchetran-stats-v3';
+
+const getStatsFromStorage = (): GameStats => {
+  try {
+    const storedStats = localStorage.getItem(STATS_STORAGE_KEY);
+    if (storedStats) {
+      const parsed = JSON.parse(storedStats);
+      if (typeof parsed.redWins === 'number' && typeof parsed.blueWins === 'number' && typeof parsed.draws === 'number') {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error("Lỗi khi đọc thống kê từ localStorage", error);
+  }
+  return { redWins: 0, blueWins: 0, draws: 0 };
+};
+
+const saveStatsToStorage = (stats: GameStats) => {
+  try {
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+  } catch (error) {
+    console.error("Lỗi khi lưu thống kê vào localStorage", error);
+  }
+};
+
 
 export const useGameLogic = () => {
   const [board, setBoard] = useState<BoardState>(INITIAL_BOARD);
@@ -38,6 +63,11 @@ export const useGameLogic = () => {
   const [winner, setWinner] = useState<Player | null>(null);
   const [moveCount, setMoveCount] = useState(0);
   const [moveLimit, setMoveLimit] = useState<number | null>(null);
+  const [animation, setAnimation] = useState<Animation | null>(null);
+  const [history, setHistory] = useState<{ board: BoardState; currentPlayer: Player; moveCount: number }[]>([]);
+  const [stats, setStats] = useState<GameStats>(getStatsFromStorage);
+
+  const ANIMATION_DURATION = 600;
 
   const pieceCounts = useMemo(() => {
     let white = 0;
@@ -63,6 +93,8 @@ export const useGameLogic = () => {
     setWinner(null);
     setMoveCount(0);
     setMoveLimit(limit);
+    setAnimation(null);
+    setHistory([]);
   }, []);
   
   const getValidMovesForPiece = (pos: Position, currentBoard: BoardState): Position[] => {
@@ -187,6 +219,20 @@ export const useGameLogic = () => {
         nextGameState = GameState.Draw;
     }
 
+    if (nextGameState !== GameState.Playing) {
+      setStats(currentStats => {
+        const newStats = { ...currentStats };
+        if (nextGameState === GameState.GameOver) {
+          if (nextWinner === Player.White) newStats.redWins++;
+          else newStats.blueWins++;
+        } else if (nextGameState === GameState.Draw) {
+          newStats.draws++;
+        }
+        saveStatsToStorage(newStats);
+        return newStats;
+      });
+    }
+
     setBoard(nextBoard);
     setCurrentPlayer(getOpponent(currentPlayer));
     setSelectedPiece(null);
@@ -197,60 +243,105 @@ export const useGameLogic = () => {
     setWinner(nextWinner);
   };
 
+  const saveToHistory = () => {
+    setHistory(prev => [...prev, { board, currentPlayer, moveCount }]);
+  };
+
   const executeMove = useCallback((from: Position, to: Position) => {
+    if (animation) return;
+    saveToHistory();
     const piece = board[from.row][from.col];
     if (!piece) return;
 
     const capturedPiece = board[to.row][to.col];
 
-    const newBoard = produce(board, draft => {
-        draft[to.row][to.col] = piece;
-        draft[from.row][from.col] = null;
-        
-        if (capturedPiece?.type === PieceType.Bomber) {
-             draft[to.row][to.col] = null; 
-        }
-    });
+    if (capturedPiece?.type === PieceType.Bomber) {
+        // First, show the attacker moving onto the square
+        const intermediateBoard = produce(board, draft => {
+            draft[to.row][to.col] = piece;
+            draft[from.row][from.col] = null;
+        });
+        setBoard(intermediateBoard);
+        setSelectedPiece(null);
+        setValidMoves([]);
+        setSpecialAbilityTargets([]);
 
-    endTurn(newBoard);
-  }, [board, currentPlayer, moveCount, moveLimit]);
+        // Then, trigger the explosion animation
+        setAnimation({ key: Date.now(), type: AnimationType.Explosion, position: to });
 
-  const executeArcherShot = useCallback((_from: Position, to: Position) => {
-    const newBoard = produce(board, draft => {
-        draft[to.row][to.col] = null;
-    });
-    endTurn(newBoard);
-  }, [board, currentPlayer, moveCount, moveLimit]);
+        // After the animation, update to the final state where both pieces are gone
+        setTimeout(() => {
+            const finalBoard = produce(intermediateBoard, draft => {
+                draft[to.row][to.col] = null;
+            });
+            endTurn(finalBoard);
+            setAnimation(null);
+        }, ANIMATION_DURATION);
+    } else {
+        // Normal move
+        const newBoard = produce(board, draft => {
+            draft[to.row][to.col] = piece;
+            draft[from.row][from.col] = null;
+        });
+        endTurn(newBoard);
+    }
+  }, [board, currentPlayer, moveCount, moveLimit, animation]);
+
+  const executeArcherShot = useCallback((from: Position, to: Position) => {
+    if (animation) return;
+    saveToHistory();
+    setAnimation({ key: Date.now(), type: AnimationType.ArrowShot, from, to });
+    setTimeout(() => {
+        const newBoard = produce(board, draft => {
+            draft[to.row][to.col] = null;
+        });
+        endTurn(newBoard);
+        setAnimation(null);
+    }, ANIMATION_DURATION);
+  }, [board, currentPlayer, moveCount, moveLimit, animation]);
   
-  const executeHeroStab = useCallback((_from: Position, to: Position) => {
-    const newBoard = produce(board, draft => {
-        draft[to.row][to.col] = null;
-    });
-    endTurn(newBoard);
-  }, [board, currentPlayer, moveCount, moveLimit]);
+  const executeHeroStab = useCallback((from: Position, to: Position) => {
+    if (animation) return;
+    saveToHistory();
+    setAnimation({ key: Date.now(), type: AnimationType.SwordThrust, from, to });
+    setTimeout(() => {
+        const newBoard = produce(board, draft => {
+            draft[to.row][to.col] = null;
+        });
+        endTurn(newBoard);
+        setAnimation(null);
+    }, ANIMATION_DURATION);
+  }, [board, currentPlayer, moveCount, moveLimit, animation]);
 
   const executeAxemanSwing = useCallback((pos: Position) => {
+      if (animation) return;
+      saveToHistory();
       const piece = board[pos.row][pos.col];
       if (!piece) return;
-      const opponent = getOpponent(piece.player);
 
-      const newBoard = produce(board, draft => {
-          for(let dr = -1; dr <= 1; dr++) {
-              for(let dc = -1; dc <= 1; dc++) {
-                  if (dr === 0 && dc === 0) continue;
-                  const r = pos.row + dr;
-                  const c = pos.col + dc;
-                  if (isValidPosition(r, c) && draft[r][c]?.player === opponent) {
-                      draft[r][c] = null;
+      setAnimation({ key: Date.now(), type: AnimationType.AxeSwing, position: pos });
+
+      setTimeout(() => {
+          const opponent = getOpponent(piece.player);
+          const newBoard = produce(board, draft => {
+              for(let dr = -1; dr <= 1; dr++) {
+                  for(let dc = -1; dc <= 1; dc++) {
+                      if (dr === 0 && dc === 0) continue;
+                      const r = pos.row + dr;
+                      const c = pos.col + dc;
+                      if (isValidPosition(r, c) && draft[r][c]?.player === opponent) {
+                          draft[r][c] = null;
+                      }
                   }
               }
-          }
-      });
-      endTurn(newBoard);
-  }, [board, currentPlayer, moveCount, moveLimit]);
+          });
+          endTurn(newBoard);
+          setAnimation(null);
+      }, ANIMATION_DURATION);
+  }, [board, currentPlayer, moveCount, moveLimit, animation]);
 
   const handleSquareClick = useCallback((row: number, col: number) => {
-    if (gameState !== GameState.Playing) return;
+    if (gameState !== GameState.Playing || animation) return;
     
     const clickedPos = { row, col };
     const pieceAtClick = board[row][col];
@@ -299,7 +390,34 @@ export const useGameLogic = () => {
             setSpecialAbilityTargets(getSpecialAbilityTargetsForPiece(clickedPos, board));
         }
     }
-  }, [board, currentPlayer, selectedPiece, validMoves, specialAbilityTargets, gameState, executeMove, executeArcherShot, executeHeroStab, executeAxemanSwing]);
+  }, [board, currentPlayer, selectedPiece, validMoves, specialAbilityTargets, gameState, executeMove, executeArcherShot, executeHeroStab, executeAxemanSwing, animation]);
+
+  const undoMove = useCallback(() => {
+    if (history.length === 0 || animation) return;
+
+    const newHistory = [...history];
+    const lastState = newHistory.pop();
+
+    if (lastState) {
+        setBoard(lastState.board);
+        setCurrentPlayer(lastState.currentPlayer);
+        setMoveCount(lastState.moveCount);
+        setHistory(newHistory);
+
+        setSelectedPiece(null);
+        setValidMoves([]);
+        setSpecialAbilityTargets([]);
+        setGameState(GameState.Playing);
+        setWinner(null);
+        setAnimation(null);
+    }
+  }, [history, animation]);
+
+  const resetStats = useCallback(() => {
+    const defaultStats = { redWins: 0, blueWins: 0, draws: 0 };
+    setStats(defaultStats);
+    saveStatsToStorage(defaultStats);
+  }, []);
   
   return {
     board,
@@ -312,7 +430,12 @@ export const useGameLogic = () => {
     pieceCounts,
     moveCount,
     moveLimit,
+    animation,
     handleSquareClick,
     resetGame,
+    undoMove,
+    canUndo: history.length > 0 && gameState === GameState.Playing,
+    stats,
+    resetStats,
   };
 };

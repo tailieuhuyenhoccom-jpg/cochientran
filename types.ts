@@ -29,3 +29,24 @@ export enum GameState {
     GameOver = 'gameOver',
     Draw = 'draw',
 }
+
+export enum AnimationType {
+  Explosion = 'explosion',
+  SwordThrust = 'sword-thrust',
+  AxeSwing = 'axe-swing',
+  ArrowShot = 'arrow-shot',
+}
+
+export interface Animation {
+  key: number;
+  type: AnimationType;
+  from?: Position;
+  to?: Position;
+  position?: Position;
+}
+
+export interface GameStats {
+  redWins: number;
+  blueWins: number;
+  draws: number;
+}

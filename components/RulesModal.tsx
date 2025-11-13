@@ -24,7 +24,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
         <div className="space-y-4">
           <div>
             <h3 className="text-xl font-semibold mb-1 text-amber-200">Mục tiêu</h3>
-            <p>Mục tiêu của trò chơi là <strong>tiêu diệt tất cả quân cờ</strong> của đối phương. Người chơi nào làm được điều đó trước sẽ thắng.</p>
+            <p>Mục tiêu của trò chơi là tiêu diệt tất cả quân cờ của đối phương (Bằng cách đi vào ô quân địch đang đứng hoặc dùng kỹ năng). Người chơi nào làm được điều đó trước sẽ thắng.</p>
           </div>
 
           <div>
@@ -34,22 +34,28 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                 <div className='font-bold'>Kiếm sĩ ({pieces.hero})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào (tới ô trống).</li>
-                    <li><strong>Kỹ năng (Đâm kiếm):</strong> Nếu không di chuyển, Kiếm sĩ có thể tấn công và tiêu diệt một quân địch ở ô liền kề. Lượt đi sẽ kết thúc sau khi tấn công.</li>
+                    <li><strong>Kỹ năng (Đâm kiếm):</strong> Nếu không di chuyển, Kiếm sĩ có thể tấn công và tiêu diệt một quân địch ở ô liền kề (ngang, dọc, hoặc chéo). Lượt đi sẽ kết thúc sau khi tấn công.</li>
                 </ul>
               </li>
-              <li><strong>Kỵ sĩ ({pieces.horseman}):</strong> Di chuyển chính xác hai ô theo bất kỳ hướng nào (ngang, dọc, hoặc chéo). Kỵ sĩ có thể nhảy qua đầu các quân cờ khác.</li>
+               <li>
+                <div className='font-bold'>Kỵ sĩ ({pieces.horseman})</div>
+                 <ul className='list-disc list-inside ml-4'>
+                    <li><strong>Di chuyển:</strong> Chính xác hai ô theo bất kỳ hướng nào (ngang, dọc, hoặc chéo). Kỵ sĩ có thể nhảy qua đầu các quân cờ khác.</li>
+                    <li><strong>Kỹ năng:</strong> Không có.</li>
+                </ul>
+              </li>
               <li>
                 <div className='font-bold'>Cung thủ ({pieces.archer})</div>
                 <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào (tới ô trống).</li>
-                    <li><strong>Kỹ năng (Bắn tên):</strong> Nếu không di chuyển, Cung thủ có thể bắn một quân địch ở khoảng cách chính xác hai ô. Lượt đi sẽ kết thúc sau khi bắn.</li>
+                    <li><strong>Kỹ năng (Bắn tên):</strong> Nếu không di chuyển, Cung thủ có thể bắn một quân địch ở khoảng cách chính xác hai ô (ngang, dọc, hoặc chéo). Lượt đi sẽ kết thúc sau khi bắn.</li>
                 </ul>
               </li>
               <li>
                 <div className='font-bold'>Lính búa ({pieces.axeman})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 xung quanh nó. Để kích hoạt, hãy nhấp vào Lính búa một lần nữa sau khi đã chọn.</li>
+                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 ô xung quanh nó (Phải có ít nhất 1 quân địch mới kích hoạt được kỹ năng). Lượt đi sẽ kết thúc sau khi Vung búa.</li>
                 </ul>
               </li>
               <li>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Player, GameState } from '../types';
+import { Player, GameState, GameStats } from '../types';
 
 interface GameInfoProps {
   currentPlayer: Player;
@@ -10,9 +10,13 @@ interface GameInfoProps {
   moveLimit: number | null;
   onNewGame: (limit: number | null) => void;
   onShowRules: () => void;
+  onUndo: () => void;
+  canUndo: boolean;
+  stats: GameStats;
+  onResetStats: () => void;
 }
 
-const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, pieceCounts, gameState, winner, moveCount, moveLimit, onNewGame, onShowRules }) => {
+const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, pieceCounts, gameState, winner, moveCount, moveLimit, onNewGame, onShowRules, onUndo, canUndo, stats, onResetStats }) => {
   const [selectedLimit, setSelectedLimit] = useState<number | null>(null);
   const limitOptions = [
     { label: 'Vô hạn', value: null },
@@ -66,6 +70,30 @@ const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, pieceCounts, gameSta
           <p className="text-2xl">{pieceCounts.black}</p>
         </div>
       </div>
+      
+      <div className="pt-2 border-t border-gray-700">
+        <h3 className="text-lg font-semibold text-center mb-2">Thống kê</h3>
+        <div className="flex justify-around text-center bg-gray-700 p-2 rounded-md">
+          <div>
+            <h4 className="text-md font-semibold text-red-400">Đỏ thắng</h4>
+            <p className="text-xl">{stats.redWins}</p>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold text-blue-400">Xanh thắng</h4>
+            <p className="text-xl">{stats.blueWins}</p>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold text-yellow-400">Hòa</h4>
+            <p className="text-xl">{stats.draws}</p>
+          </div>
+        </div>
+        <button 
+          onClick={onResetStats} 
+          className="w-full mt-2 bg-red-800 hover:bg-red-900 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors"
+        >
+          Xóa thống kê
+        </button>
+      </div>
 
       <div className="pt-2">
         <h3 className="text-lg font-semibold text-center mb-2">Giới hạn nước đi (Ván sau)</h3>
@@ -92,6 +120,13 @@ const GameInfo: React.FC<GameInfoProps> = ({ currentPlayer, pieceCounts, gameSta
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105"
         >
           Ván mới
+        </button>
+        <button
+          onClick={onUndo}
+          disabled={!canUndo}
+          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:transform-none"
+        >
+          Hoàn tác
         </button>
         <button 
           onClick={onShowRules} 

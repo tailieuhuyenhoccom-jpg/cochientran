@@ -12,7 +12,7 @@ interface BoardProps {
 
 const Board: React.FC<BoardProps> = ({ board, selectedPiece, validMoves, specialAbilityTargets, onSquareClick }) => {
   return (
-    <div className="grid grid-cols-5 grid-rows-5 aspect-square w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl shadow-2xl border-4 border-amber-900 rounded-md overflow-hidden">
+    <div className="grid grid-cols-5 grid-rows-5 aspect-square w-full shadow-2xl border-4 border-amber-900 rounded-md overflow-hidden">
       {board.map((row, rowIndex) =>
         row.map((piece, colIndex) => {
           const isLight = (rowIndex + colIndex) % 2 !== 0;

@@ -6,11 +6,12 @@ const Piece: React.FC<{ piece: PieceProps }> = ({ piece }) => {
   const emoji = PIECE_EMOJI[piece.player][piece.type];
 
   // Sử dụng text-shadow để tạo hiệu ứng viền hoạt động tốt với emoji
+  // Tăng độ dày viền từ 1px lên 2px
   const playerStyle: React.CSSProperties = {
     textShadow:
       piece.player === Player.White
-        ? '1px 1px 0 #dc2626, -1px -1px 0 #dc2626, 1px -1px 0 #dc2626, -1px 1px 0 #dc2626, 1px 0 0 #dc2626, -1px 0 0 #dc2626, 0 1px 0 #dc2626, 0 -1px 0 #dc2626' // Viền đỏ (red-600)
-        : '1px 1px 0 #2563eb, -1px -1px 0 #2563eb, 1px -1px 0 #2563eb, -1px 1px 0 #2563eb, 1px 0 0 #2563eb, -1px 0 0 #2563eb, 0 1px 0 #2563eb, 0 -1px 0 #2563eb', // Viền xanh (blue-600)
+        ? '2px 2px 0 #dc2626, -2px -2px 0 #dc2626, 2px -2px 0 #dc2626, -2px 2px 0 #dc2626, 2px 0 0 #dc2626, -2px 0 0 #dc2626, 0 2px 0 #dc2626, 0 -2px 0 #dc2626' // Viền đỏ dày hơn
+        : '2px 2px 0 #2563eb, -2px -2px 0 #2563eb, 2px -2px 0 #2563eb, -2px 2px 0 #2563eb, 2px 0 0 #2563eb, -2px 0 0 #2563eb, 0 2px 0 #2563eb, 0 -2px 0 #2563eb', // Viền xanh dày hơn
   };
 
   return (
