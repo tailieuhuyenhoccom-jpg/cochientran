@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PIECE_EMOJI } from '../constants';
 import { Player, PieceType } from '../types';
@@ -90,6 +89,35 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                <li>Ván cờ kết thúc khi một bên không còn quân cờ nào. Bên còn lại sẽ là người chiến thắng.</li>
                <li>Nếu có giới hạn nước đi, ván cờ sẽ kết thúc <strong>hòa</strong> nếu không có ai thắng trước khi hết lượt.</li>
              </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-2 text-amber-200">Sự khắc chế lẫn nhau</h3>
+            <p className="mb-2">Dưới đây là tóm tắt đơn giản về sự khắc chế lẫn nhau giữa các quân cờ:</p>
+            <p className="mb-2">Về cơ bản, sự khắc chế trong Cờ Chiến Trận hoạt động giống như trò "Kéo, Búa, Bao", nhưng phức tạp hơn một chút:</p>
+            <ul className="space-y-3 mb-2">
+              <li>
+                <div className='font-bold'>Tầm xa khắc chế Tầm gần:</div>
+                <p className="ml-4">Cung thủ có lợi thế lớn khi đối đầu với các quân đi chậm và đánh gần như Kiếm sĩ và Lính búa vì có thể tấn công từ khoảng cách an toàn.</p>
+              </li>
+              <li>
+                <div className='font-bold'>Cơ động khắc chế Tầm xa:</div>
+                <p className="ml-4">Kỵ sĩ là khắc tinh của Cung thủ. Với khả năng di chuyển 2 ô và nhảy qua đầu, nó có thể nhanh chóng áp sát và tiêu diệt Cung thủ trước khi Cung thủ kịp hành động.</p>
+              </li>
+              <li>
+                <div className='font-bold'>Phòng thủ khắc chế Kỹ năng:</div>
+                <p className="ml-4">Khiên thủ khi đang ở thế thủ sẽ vô hiệu hóa hoàn toàn các kỹ năng tấn công của Cung thủ, Kiếm sĩ, và Lính búa. Đây là bức tường vững chắc để chống lại các đòn tấn công đặc biệt.</p>
+              </li>
+              <li>
+                <div className='font-bold'>Hy sinh khắc chế Kẻ tấn công:</div>
+                <p className="ml-4">Lính cảm tử là một cái bẫy. Bất kỳ quân nào (như Kỵ sĩ hay Kiếm sĩ) di chuyển vào để ăn nó sẽ bị nổ banh xác cùng. Điều này buộc đối thủ phải dùng kỹ năng từ xa để xử lý nó một cách an toàn, làm lãng phí một lượt đi.</p>
+              </li>
+              <li>
+                <div className='font-bold'>Sát thương lan khắc chế Co cụm:</div>
+                <p className="ml-4">Lính búa cực kỳ mạnh khi đối phương dàn quân đứng gần nhau. Kỹ năng vung búa của nó có thể quét sạch nhiều quân cờ trong một lượt, trừng phạt lối chơi co cụm.</p>
+              </li>
+            </ul>
+            <p><strong>Kiếm sĩ</strong> là quân cờ linh hoạt, không quá mạnh về mặt nào nhưng có thể đối phó tốt trong nhiều tình huống tầm gần, đặc biệt là khi tấn công các mục tiêu không có khả năng phòng thủ đặc biệt như Khiên thủ chưa vào thế thủ, áp sát được Cung thủ thì cứ thế ép Cung thủ vào tường và tiêu diệt.</p>
           </div>
 
         </div>
