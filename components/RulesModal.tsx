@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { PIECE_EMOJI } from '../constants';
-import { Player } from '../types';
+import { Player, PieceType } from '../types';
 
 interface RulesModalProps {
   onClose: () => void;
@@ -24,45 +24,61 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
         <div className="space-y-4">
           <div>
             <h3 className="text-xl font-semibold mb-1 text-amber-200">Mục tiêu</h3>
-            <p>Mục tiêu của trò chơi là tiêu diệt tất cả quân cờ của đối phương (Bằng cách đi vào ô quân địch đang đứng hoặc dùng kỹ năng). Người chơi nào làm được điều đó trước sẽ thắng.</p>
+            <p>Mục tiêu của trò chơi là tiêu diệt tất cả quân cờ của đối phương. Người chơi nào làm được điều đó trước sẽ thắng.</p>
           </div>
 
+           <div>
+            <h3 className="text-xl font-semibold mb-2 text-amber-200">Địa hình đặc biệt</h3>
+            <ul className="space-y-2 list-disc list-inside ml-4">
+              <li><strong>Bàn cờ 6x6:</strong> Ván cờ diễn ra trên bàn cờ này.</li>
+              <li><strong>Ô Đá (🪨):</strong> Các ô này là chướng ngại vật và không thể di chuyển vào.</li>
+              <li><strong>Ô Tiến Hóa (✨):</strong> Khi một quân cờ di chuyển vào ô này, nó sẽ được <strong>tiến hóa</strong> vĩnh viễn. Một quân cờ đã tiến hóa sẽ có khả năng di chuyển 1 hoặc 2 ô theo mọi hướng (có thể nhảy qua quân khác), <strong>thay thế</strong> cho cách di chuyển và kỹ năng ban đầu của nó.</li>
+            </ul>
+          </div>
+
+
           <div>
-            <h3 className="text-xl font-semibold mb-2 text-amber-200">Các quân cờ và Kỹ năng</h3>
+            <h3 className="text-xl font-semibold mb-2 text-amber-200">Các quân cờ và Kỹ năng (chưa tiến hóa)</h3>
             <ul className="space-y-3">
               <li>
                 <div className='font-bold'>Kiếm sĩ ({pieces.hero})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào (tới ô trống).</li>
-                    <li><strong>Kỹ năng (Đâm kiếm):</strong> Nếu không di chuyển, Kiếm sĩ có thể tấn công và tiêu diệt một quân địch ở ô liền kề (ngang, dọc, hoặc chéo). Lượt đi sẽ kết thúc sau khi tấn công.</li>
+                    <li><strong>Kỹ năng (Đâm kiếm):</strong> Nếu không di chuyển, Kiếm sĩ có thể tấn công và tiêu diệt một quân địch ở ô liền kề.</li>
                 </ul>
               </li>
                <li>
                 <div className='font-bold'>Kỵ sĩ ({pieces.horseman})</div>
                  <ul className='list-disc list-inside ml-4'>
-                    <li><strong>Di chuyển:</strong> Chính xác hai ô theo bất kỳ hướng nào (ngang, dọc, hoặc chéo). Kỵ sĩ có thể nhảy qua đầu các quân cờ khác.</li>
-                    <li><strong>Kỹ năng:</strong> Không có.</li>
+                    <li><strong>Di chuyển:</strong> Chính xác hai ô theo bất kỳ hướng nào. Kỵ sĩ có thể nhảy qua đầu các quân cờ khác.</li>
                 </ul>
               </li>
               <li>
                 <div className='font-bold'>Cung thủ ({pieces.archer})</div>
                 <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào (tới ô trống).</li>
-                    <li><strong>Kỹ năng (Bắn tên):</strong> Nếu không di chuyển, Cung thủ có thể bắn một quân địch ở khoảng cách chính xác hai ô (ngang, dọc, hoặc chéo). Lượt đi sẽ kết thúc sau khi bắn.</li>
+                    <li><strong>Kỹ năng (Bắn tên):</strong> Nếu không di chuyển, Cung thủ có thể bắn một quân địch ở khoảng cách chính xác hai ô.</li>
                 </ul>
               </li>
               <li>
                 <div className='font-bold'>Lính búa ({pieces.axeman})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 ô xung quanh nó (Phải có ít nhất 1 quân địch mới kích hoạt được kỹ năng). Lượt đi sẽ kết thúc sau khi Vung búa.</li>
+                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển và có địch liền kề, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 ô xung quanh nó.</li>
                 </ul>
               </li>
               <li>
                 <div className='font-bold'>Lính cảm tử ({pieces.bomber})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Cảm tử):</strong> Khi bị một quân địch <strong>di chuyển vào ô để tiêu diệt</strong>, Lính cảm tử sẽ phát nổ và loại bỏ cả quân địch đó. Kỹ năng này không kích hoạt nếu Lính cảm tử bị tiêu diệt bởi kỹ năng tầm xa (Cung thủ) hoặc kỹ năng đặc biệt khác (Kiếm sĩ, Lính búa).</li>
+                    <li><strong>Kỹ năng (Cảm tử):</strong> Khi bị một quân địch <strong>di chuyển vào ô để tiêu diệt</strong>, Lính cảm tử sẽ phát nổ và loại bỏ cả quân địch đó. Không kích hoạt bởi kỹ năng tầm xa.</li>
+                </ul>
+              </li>
+               <li>
+                <div className='font-bold'>Khiên thủ ({pieces.shieldbearer})</div>
+                 <ul className='list-disc list-inside ml-4'>
+                    <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
+                    <li><strong>Kỹ năng (Thủ thế):</strong> Nếu không di chuyển, Khiên thủ có thể kích hoạt kỹ năng để vào thế thủ. Khi ở thế thủ, nó không thể bị tiêu diệt bởi kỹ năng của đối phương (bắn tên, đâm kiếm, vung búa). Di chuyển hoặc kích hoạt kỹ năng lần nữa sẽ hủy bỏ thế thủ. Kỹ năng này tốn một lượt đi.</li>
                 </ul>
               </li>
             </ul>
@@ -71,8 +87,8 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
           <div>
             <h3 className="text-xl font-semibold mb-1 text-amber-200">Kết thúc ván cờ</h3>
              <ul className="list-disc list-inside ml-4">
-               <li>Ván cờ kết thúc khi một bên không còn quân cờ nào trên bàn cờ. Bên còn lại sẽ là người chiến thắng.</li>
-               <li>Nếu trò chơi có giới hạn số nước đi, ván cờ sẽ kết thúc với kết quả <strong>hòa</strong> nếu không có ai thắng trước khi hết lượt.</li>
+               <li>Ván cờ kết thúc khi một bên không còn quân cờ nào. Bên còn lại sẽ là người chiến thắng.</li>
+               <li>Nếu có giới hạn nước đi, ván cờ sẽ kết thúc <strong>hòa</strong> nếu không có ai thắng trước khi hết lượt.</li>
              </ul>
           </div>
 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Piece as PieceProps, Player } from '../types';
 import { PIECE_EMOJI } from '../constants';
@@ -14,8 +15,11 @@ const Piece: React.FC<{ piece: PieceProps }> = ({ piece }) => {
         : '2px 2px 0 #2563eb, -2px -2px 0 #2563eb, 2px -2px 0 #2563eb, -2px 2px 0 #2563eb, 2px 0 0 #2563eb, -2px 0 0 #2563eb, 0 2px 0 #2563eb, 0 -2px 0 #2563eb', // Viền xanh dày hơn
   };
 
+  const wrapperClass = piece.isEvolved ? 'animate-evolved-glow' : '';
+  const defendingClass = piece.isDefending ? 'is-defending' : '';
+
   return (
-    <div className="relative flex items-center justify-center">
+    <div className={`relative flex items-center justify-center ${wrapperClass} ${defendingClass}`}>
       <span
         className="text-4xl md:text-5xl lg:text-6xl select-none leading-none transition-transform duration-150 transform group-hover:scale-110"
         style={playerStyle}

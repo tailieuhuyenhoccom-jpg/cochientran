@@ -1,6 +1,7 @@
+
 import { useState, useCallback, useMemo } from 'react';
 import { BoardState, Piece, PieceType, Player, Position, GameState, Animation, AnimationType, GameStats } from '../types';
-import { INITIAL_BOARD, BOARD_SIZE } from '../constants';
+import { INITIAL_BOARD, BOARD_SIZE, TERRAIN_LAYOUT } from '../constants';
 import { produce } from 'immer';
 
 // Utility to check deep equality for positions
@@ -27,7 +28,7 @@ const canAxemanUseAbility = (pos: Position, currentBoard: BoardState): boolean =
     return false; // No enemies nearby
 };
 
-const STATS_STORAGE_KEY = 'chienchetran-stats-v3';
+const STATS_STORAGE_KEY = 'chienchetran-stats-v4';
 
 const getStatsFromStorage = (): GameStats => {
   try {
@@ -105,10 +106,44 @@ export const useGameLogic = () => {
     const { row, col } = pos;
     const opponent = getOpponent(piece.player);
 
+    if (piece.isEvolved) {
+        const evolvedDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+        evolvedDirections.forEach(([dr, dc]) => {
+            // Check and add 1-square move
+            const r1 = row + dr;
+            const c1 = col + dc;
+            if (isValidPosition(r1, c1) && TERRAIN_LAYOUT[r1][c1] !== 'rock') {
+                const targetPiece = currentBoard[r1][c1];
+                if (targetPiece === null || targetPiece.player === opponent) {
+                    moves.push({ row: r1, col: c1 });
+                }
+            }
+            // Check and add 2-square move
+            const r2 = row + dr * 2;
+            const c2 = col + dc * 2;
+             if (isValidPosition(r2, c2) && TERRAIN_LAYOUT[r2][c2] !== 'rock') {
+                const targetPiece = currentBoard[r2][c2];
+                if (targetPiece === null || targetPiece.player === opponent) {
+                    moves.push({ row: r2, col: c2 });
+                }
+            }
+        });
+        return moves;
+    }
+
     const addMove = (r: number, c: number) => {
-        if (isValidPosition(r, c)) {
+        if (isValidPosition(r, c) && TERRAIN_LAYOUT[r][c] !== 'rock') {
             const targetPiece = currentBoard[r][c];
             if (targetPiece === null || targetPiece.player === opponent) {
+                moves.push({ row: r, col: c });
+            }
+        }
+    };
+    
+    const addEmptySquareMove = (r: number, c: number) => {
+        if (isValidPosition(r, c) && TERRAIN_LAYOUT[r][c] !== 'rock') {
+            const targetPiece = currentBoard[r][c];
+            if (targetPiece === null) {
                 moves.push({ row: r, col: c });
             }
         }
@@ -116,35 +151,15 @@ export const useGameLogic = () => {
 
     switch (piece.type) {
         case PieceType.Hero:
-            const heroDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-            heroDirections.forEach(([dr, dc]) => {
-                const r = row + dr;
-                const c = col + dc;
-                if (isValidPosition(r, c)) {
-                    const targetPiece = currentBoard[r][c];
-                    // Hero can only move to empty squares. Capture is a special ability.
-                    if (targetPiece === null) {
-                        moves.push({ row: r, col: c });
-                    }
-                }
-            });
-            break;
         case PieceType.Archer:
-            const archerDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-            archerDirections.forEach(([dr, dc]) => {
-                const r = row + dr;
-                const c = col + dc;
-                if (isValidPosition(r, c)) {
-                    const targetPiece = currentBoard[r][c];
-                    // Archer can only move to empty squares. Capture is a special ability.
-                    if (targetPiece === null) {
-                        moves.push({ row: r, col: c });
-                    }
-                }
+            const specialDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+            specialDirections.forEach(([dr, dc]) => {
+                addEmptySquareMove(row + dr, col + dc);
             });
             break;
         case PieceType.Axeman:
         case PieceType.Bomber:
+        case PieceType.ShieldBearer:
             // All move 1 square in 8 directions
             const directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
             directions.forEach(([dr, dc]) => addMove(row + dr, col + dc));
@@ -161,7 +176,7 @@ export const useGameLogic = () => {
   const getSpecialAbilityTargetsForPiece = (pos: Position, currentBoard: BoardState): Position[] => {
     const targets: Position[] = [];
     const piece = currentBoard[pos.row][pos.col];
-    if (!piece) return [];
+    if (!piece || piece.isEvolved) return []; // Evolved pieces lose special abilities
     
     const { row, col } = pos;
     const opponent = getOpponent(piece.player);
@@ -250,15 +265,18 @@ export const useGameLogic = () => {
   const executeMove = useCallback((from: Position, to: Position) => {
     if (animation) return;
     saveToHistory();
-    const piece = board[from.row][from.col];
-    if (!piece) return;
 
     const capturedPiece = board[to.row][to.col];
 
     if (capturedPiece?.type === PieceType.Bomber) {
         // First, show the attacker moving onto the square
         const intermediateBoard = produce(board, draft => {
-            draft[to.row][to.col] = piece;
+            const pieceToMove = draft[from.row][from.col];
+            if (!pieceToMove) return;
+             if (pieceToMove.type === PieceType.ShieldBearer) {
+                pieceToMove.isDefending = false;
+            }
+            draft[to.row][to.col] = pieceToMove;
             draft[from.row][from.col] = null;
         });
         setBoard(intermediateBoard);
@@ -280,8 +298,20 @@ export const useGameLogic = () => {
     } else {
         // Normal move
         const newBoard = produce(board, draft => {
-            draft[to.row][to.col] = piece;
+            const pieceToMove = draft[from.row][from.col];
+            if (!pieceToMove) return;
+            
+            if (pieceToMove.type === PieceType.ShieldBearer) {
+                pieceToMove.isDefending = false;
+            }
+
+            draft[to.row][to.col] = pieceToMove;
             draft[from.row][from.col] = null;
+
+            // Evolve piece if it lands on an evolution square
+            if (TERRAIN_LAYOUT[to.row][to.col] === 'evolution') {
+                pieceToMove.isEvolved = true;
+            }
         });
         endTurn(newBoard);
     }
@@ -293,6 +323,10 @@ export const useGameLogic = () => {
     setAnimation({ key: Date.now(), type: AnimationType.ArrowShot, from, to });
     setTimeout(() => {
         const newBoard = produce(board, draft => {
+            const targetPiece = draft[to.row][to.col];
+            if (targetPiece?.type === PieceType.ShieldBearer && targetPiece.isDefending) {
+                return; 
+            }
             draft[to.row][to.col] = null;
         });
         endTurn(newBoard);
@@ -306,6 +340,10 @@ export const useGameLogic = () => {
     setAnimation({ key: Date.now(), type: AnimationType.SwordThrust, from, to });
     setTimeout(() => {
         const newBoard = produce(board, draft => {
+            const targetPiece = draft[to.row][to.col];
+            if (targetPiece?.type === PieceType.ShieldBearer && targetPiece.isDefending) {
+                return;
+            }
             draft[to.row][to.col] = null;
         });
         endTurn(newBoard);
@@ -329,8 +367,14 @@ export const useGameLogic = () => {
                       if (dr === 0 && dc === 0) continue;
                       const r = pos.row + dr;
                       const c = pos.col + dc;
-                      if (isValidPosition(r, c) && draft[r][c]?.player === opponent) {
-                          draft[r][c] = null;
+                      if (isValidPosition(r, c)) {
+                          const targetPiece = draft[r][c];
+                          if (targetPiece && targetPiece.player === opponent) {
+                              if (targetPiece.type === PieceType.ShieldBearer && targetPiece.isDefending) {
+                                  continue;
+                              }
+                              draft[r][c] = null;
+                          }
                       }
                   }
               }
@@ -340,15 +384,34 @@ export const useGameLogic = () => {
       }, ANIMATION_DURATION);
   }, [board, currentPlayer, moveCount, moveLimit, animation]);
 
+    const toggleShieldBearerDefense = useCallback((pos: Position) => {
+        if (animation) return;
+        saveToHistory();
+        const newBoard = produce(board, draft => {
+            const piece = draft[pos.row][pos.col];
+            if (piece && piece.type === PieceType.ShieldBearer) {
+                piece.isDefending = !piece.isDefending;
+            }
+        });
+        endTurn(newBoard);
+    }, [board, currentPlayer, moveCount, moveLimit, animation]);
+
   const handleSquareClick = useCallback((row: number, col: number) => {
-    if (gameState !== GameState.Playing || animation) return;
+    if (gameState !== GameState.Playing || animation || TERRAIN_LAYOUT[row][col] === 'rock') return;
     
     const clickedPos = { row, col };
     const pieceAtClick = board[row][col];
 
     if (selectedPiece) {
         if (posEquals(selectedPiece, clickedPos)) {
-            if (pieceAtClick?.type === PieceType.Axeman && canAxemanUseAbility(selectedPiece, board)) {
+            const selectedPieceOnBoard = board[selectedPiece.row][selectedPiece.col];
+            
+            if (selectedPieceOnBoard?.type === PieceType.ShieldBearer && !selectedPieceOnBoard.isEvolved) {
+                toggleShieldBearerDefense(selectedPiece);
+                return;
+            }
+
+            if (selectedPieceOnBoard?.type === PieceType.Axeman && !selectedPieceOnBoard.isEvolved && canAxemanUseAbility(selectedPiece, board)) {
                 executeAxemanSwing(selectedPiece);
             } else {
                 setSelectedPiece(null);
@@ -390,7 +453,7 @@ export const useGameLogic = () => {
             setSpecialAbilityTargets(getSpecialAbilityTargetsForPiece(clickedPos, board));
         }
     }
-  }, [board, currentPlayer, selectedPiece, validMoves, specialAbilityTargets, gameState, executeMove, executeArcherShot, executeHeroStab, executeAxemanSwing, animation]);
+  }, [board, currentPlayer, selectedPiece, validMoves, specialAbilityTargets, gameState, executeMove, executeArcherShot, executeHeroStab, executeAxemanSwing, toggleShieldBearerDefense, animation]);
 
   const undoMove = useCallback(() => {
     if (history.length === 0 || animation) return;

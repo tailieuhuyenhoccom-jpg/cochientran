@@ -10,11 +10,14 @@ export enum PieceType {
   Archer = 'archer',     // Cung thủ
   Axeman = 'axeman',     // Lính búa
   Bomber = 'bomber',     // Lính cảm tử
+  ShieldBearer = 'shieldbearer', // Khiên thủ
 }
 
 export interface Piece {
   type: PieceType;
   player: Player;
+  isEvolved?: boolean;
+  isDefending?: boolean;
 }
 
 export interface Position {
