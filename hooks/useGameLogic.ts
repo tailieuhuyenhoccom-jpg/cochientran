@@ -407,7 +407,14 @@ export const useGameLogic = () => {
             const selectedPieceOnBoard = board[selectedPiece.row][selectedPiece.col];
             
             if (selectedPieceOnBoard?.type === PieceType.ShieldBearer && !selectedPieceOnBoard.isEvolved) {
-                toggleShieldBearerDefense(selectedPiece);
+                if (!selectedPieceOnBoard.isDefending) {
+                    toggleShieldBearerDefense(selectedPiece);
+                } else {
+                    // Deselect if already defending
+                    setSelectedPiece(null);
+                    setValidMoves([]);
+                    setSpecialAbilityTargets([]);
+                }
                 return;
             }
 

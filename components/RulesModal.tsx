@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PIECE_EMOJI } from '../constants';
 import { Player, PieceType } from '../types';
@@ -31,7 +32,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
             <ul className="space-y-2 list-disc list-inside ml-4">
               <li><strong>Bàn cờ 6x6:</strong> Ván cờ diễn ra trên bàn cờ này.</li>
               <li><strong>Ô Đá (🪨):</strong> Các ô này là chướng ngại vật và không thể di chuyển vào.</li>
-              <li><strong>Ô Tiến Hóa (✨):</strong> Khi một quân cờ di chuyển vào ô này, nó sẽ được <strong>tiến hóa</strong> vĩnh viễn. Một quân cờ đã tiến hóa sẽ có khả năng di chuyển 1 hoặc 2 ô theo mọi hướng (có thể nhảy qua quân khác), <strong>thay thế</strong> cho cách di chuyển và kỹ năng ban đầu của nó.</li>
+              <li><strong>Ô Tiến Hóa (✨):</strong> Khi một quân cờ di chuyển vào ô này, nó sẽ được <strong>tiến hóa</strong> vĩnh viễn, biến thành 'Đại tướng' (🚩). Một quân cờ đã tiến hóa sẽ có khả năng di chuyển 1 hoặc 2 ô theo mọi hướng (có thể nhảy qua quân khác), <strong>thay thế</strong> cho cách di chuyển và kỹ năng ban đầu của nó.</li>
             </ul>
           </div>
 
@@ -77,7 +78,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                 <div className='font-bold'>Khiên thủ ({pieces.shieldbearer})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Thủ thế):</strong> Nếu không di chuyển, Khiên thủ có thể kích hoạt kỹ năng để vào thế thủ. Khi ở thế thủ, nó không thể bị tiêu diệt bởi kỹ năng của đối phương (bắn tên, đâm kiếm, vung búa). Di chuyển hoặc kích hoạt kỹ năng lần nữa sẽ hủy bỏ thế thủ. Kỹ năng này tốn một lượt đi.</li>
+                    <li><strong>Kỹ năng (Thủ thế):</strong> Nếu không di chuyển, Khiên thủ có thể kích hoạt kỹ năng để vào thế thủ. Khi ở thế thủ, nó không thể bị tiêu diệt bởi kỹ năng của đối phương (bắn tên, đâm kiếm, vung búa). Di chuyển sẽ hủy bỏ thế thủ. Kỹ năng này tốn một lượt đi.</li>
                 </ul>
               </li>
             </ul>
