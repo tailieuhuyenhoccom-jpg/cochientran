@@ -111,14 +111,14 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
               </li>
               <li>
                 <div className='font-bold'>Hy sinh khắc chế Kẻ tấn công:</div>
-                <p className="ml-4">Lính cảm tử là một cái bẫy. Bất kỳ quân nào (như Kỵ sĩ hay Kiếm sĩ) di chuyển vào để ăn nó sẽ bị nổ banh xác cùng. Điều này buộc đối thủ phải dùng kỹ năng từ xa để xử lý nó một cách an toàn, làm lãng phí một lượt đi.</p>
+                <p className="ml-4">Lính cảm tử là một cái bẫy. Bất kỳ quân nào (như Kỵ sĩ hay Đại tướng) di chuyển vào để ăn nó sẽ bị nổ banh xác cùng. Điều này buộc đối thủ phải dùng kỹ năng từ xa để xử lý nó một cách an toàn, làm lãng phí một lượt đi.</p>
               </li>
               <li>
                 <div className='font-bold'>Sát thương lan khắc chế Co cụm:</div>
                 <p className="ml-4">Lính búa cực kỳ mạnh khi đối phương dàn quân đứng gần nhau. Kỹ năng vung búa của nó có thể quét sạch nhiều quân cờ trong một lượt, trừng phạt lối chơi co cụm.</p>
               </li>
             </ul>
-            <p><strong>Kiếm sĩ</strong> là quân cờ linh hoạt, không quá mạnh về mặt nào nhưng có thể đối phó tốt trong nhiều tình huống tầm gần, đặc biệt là khi tấn công các mục tiêu không có khả năng phòng thủ đặc biệt như Khiên thủ chưa vào thế thủ, áp sát được Cung thủ thì cứ thế ép Cung thủ vào tường và tiêu diệt.</p>
+            <p><strong>Kiếm sĩ</strong> là quân cờ linh hoạt, không quá mạnh về mặt nào nhưng có thể đối phó tốt trong nhiều tình huống tầm gần, đặc biệt là khi áp sát được Cung thủ thì cứ thế ép Cung thủ vào tường và tiêu diệt.</p>
           </div>
 
         </div>
