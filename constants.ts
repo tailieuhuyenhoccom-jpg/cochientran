@@ -48,18 +48,18 @@ export const INITIAL_BOARD: BoardState = (() => {
 
 export const PIECE_EMOJI: Record<Player, Record<PieceType, string>> = {
   [Player.White]: {
-    [PieceType.Hero]: '⚔️',
-    [PieceType.Horseman]: '🐎',
-    [PieceType.Archer]: '🎯',
-    [PieceType.Axeman]: '🔨',
-    [PieceType.Bomber]: '💣',
-    [PieceType.ShieldBearer]: '🛡️',
+    [PieceType.Hero]: '⚔️', // 2 cây kiếm (Kiếm sĩ)
+    [PieceType.Horseman]: '🏇', // Người cưỡi ngựa
+    [PieceType.Archer]: '🏹', // Cung (đại diện xạ thủ)
+    [PieceType.Axeman]: '🪓', // Búa (đại diện chiến binh búa)
+    [PieceType.Bomber]: '💣', // Bom
+    [PieceType.ShieldBearer]: '🛡️', // Khiên
   },
   [Player.Black]: {
     [PieceType.Hero]: '⚔️',
-    [PieceType.Horseman]: '🐎',
-    [PieceType.Archer]: '🎯',
-    [PieceType.Axeman]: '🔨',
+    [PieceType.Horseman]: '🏇',
+    [PieceType.Archer]: '🏹',
+    [PieceType.Axeman]: '🪓',
     [PieceType.Bomber]: '💣',
     [PieceType.ShieldBearer]: '🛡️',
   },

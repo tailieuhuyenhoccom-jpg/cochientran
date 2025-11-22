@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Animation, AnimationType } from '../types';
 import { BOARD_SIZE } from '../constants';
@@ -36,7 +37,7 @@ const AnimationLayer: React.FC<AnimationLayerProps> = ({ animation }) => {
         return (
           <div
             key={key}
-            className="absolute"
+            className="absolute flex items-center justify-center z-50"
             style={{
               top: `${position.row * cellSize}%`,
               left: `${position.col * cellSize}%`,
@@ -52,7 +53,7 @@ const AnimationLayer: React.FC<AnimationLayerProps> = ({ animation }) => {
         return (
           <div
             key={key}
-            className="absolute flex items-center justify-center"
+            className="absolute flex items-center justify-center z-50 pointer-events-none"
             style={{
               top: `${(position.row - 1) * cellSize}%`,
               left: `${(position.col - 1) * cellSize}%`,
@@ -60,21 +61,23 @@ const AnimationLayer: React.FC<AnimationLayerProps> = ({ animation }) => {
               height: `${cellSize * 3}%`,
             }}
           >
-            <div className="absolute w-full h-full rounded-full border-4 border-gray-200 border-t-transparent animate-spin-once" />
-             <div className="text-4xl animate-shake">🔨</div>
+            {/* Shockwave ring representing the swing radius */}
+            <div className="absolute w-4/5 h-4/5 rounded-full border-[6px] border-gray-100 border-t-gray-400 border-r-transparent opacity-80 shadow-[0_0_20px_rgba(255,255,255,0.6)] animate-spin-fast" />
+             {/* The spinning Axe */}
+             <div className="text-7xl animate-cleave drop-shadow-2xl filter grayscale-[20%]">🪓</div>
           </div>
         );
       case AnimationType.ArrowShot:
         if (!from || !to) return null;
         return (
-            <div key={key} className="absolute animate-fly" style={getProjectileStyles()}>
+            <div key={key} className="absolute animate-fly z-50" style={getProjectileStyles()}>
               <span className="text-4xl">🏹</span>
             </div>
         );
       case AnimationType.SwordThrust:
          if (!from || !to) return null;
          return (
-             <div key={key} className="absolute animate-fly-fast" style={getProjectileStyles()}>
+             <div key={key} className="absolute animate-fly-fast z-50" style={getProjectileStyles()}>
                <span className="text-4xl">🗡️</span>
              </div>
          );
@@ -84,7 +87,7 @@ const AnimationLayer: React.FC<AnimationLayerProps> = ({ animation }) => {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
+    <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-50">
       {renderAnimation()}
       <style>{`
         @keyframes explode {
@@ -96,24 +99,24 @@ const AnimationLayer: React.FC<AnimationLayerProps> = ({ animation }) => {
           animation: explode 0.6s ease-out forwards;
         }
 
-        @keyframes spin-once {
-          from { transform: rotate(0deg); opacity: 0.8; }
-          to { transform: rotate(360deg); opacity: 0; }
+        /* Fast spin for the shockwave ring */
+        @keyframes spin-fast {
+          0% { transform: rotate(0deg) scale(0.8); opacity: 0; }
+          20% { opacity: 1; }
+          100% { transform: rotate(360deg) scale(1.1); opacity: 0; }
         }
-        .animate-spin-once { 
-            animation: spin-once 0.6s linear forwards; 
+        .animate-spin-fast { 
+            animation: spin-fast 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
         }
 
-        @keyframes shake {
-          0%, 100% { transform: translate(0, 0) rotate(0); }
-          25% { transform: translate(2px, -2px) rotate(15deg); }
-          50% { transform: translate(-2px, 2px) rotate(-15deg); }
-          75% { transform: translate(2px, 2px) rotate(15deg); }
+        /* Cleave animation: Rotate rapidly and enlarge */
+        @keyframes cleave {
+          0% { transform: rotate(0deg) scale(0.5); opacity: 0.5; }
+          20% { opacity: 1; transform: rotate(90deg) scale(1.2); }
+          100% { transform: rotate(720deg) scale(0.8); opacity: 0; }
         }
-        .animate-shake {
-            animation: shake 0.4s ease-in-out forwards;
-            opacity: 1;
-            animation-iteration-count: 2;
+        .animate-cleave {
+            animation: cleave 0.6s ease-out forwards;
         }
 
         @keyframes fly {

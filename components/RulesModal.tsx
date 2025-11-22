@@ -61,10 +61,10 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                 </ul>
               </li>
               <li>
-                <div className='font-bold'>Lính búa ({pieces.axeman})</div>
+                <div className='font-bold'>Lính rìu ({pieces.axeman})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Vung búa):</strong> Nếu không di chuyển và có địch liền kề, Lính búa có thể tấn công tất cả quân địch trong vùng 3x3 ô xung quanh nó.</li>
+                    <li><strong>Kỹ năng (Vung rìu):</strong> Nếu không di chuyển và có địch liền kề, Lính rìu có thể tấn công tất cả quân địch trong vùng 3x3 ô xung quanh nó.</li>
                 </ul>
               </li>
               <li>
@@ -78,7 +78,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
                 <div className='font-bold'>Khiên thủ ({pieces.shieldbearer})</div>
                  <ul className='list-disc list-inside ml-4'>
                     <li><strong>Di chuyển:</strong> Một ô theo bất kỳ hướng nào.</li>
-                    <li><strong>Kỹ năng (Thủ thế):</strong> Nếu không di chuyển, Khiên thủ có thể kích hoạt kỹ năng để vào thế thủ. Khi ở thế thủ, nó không thể bị tiêu diệt bởi kỹ năng của đối phương (bắn tên, đâm kiếm, vung búa). Di chuyển sẽ hủy bỏ thế thủ. Kỹ năng này tốn một lượt đi.</li>
+                    <li><strong>Kỹ năng (Thủ thế):</strong> Nếu không di chuyển, Khiên thủ có thể kích hoạt kỹ năng để vào thế thủ. Khi ở thế thủ, nó không thể bị tiêu diệt bởi kỹ năng của đối phương (bắn tên, đâm kiếm, vung rìu). Di chuyển sẽ hủy bỏ thế thủ. Kỹ năng này tốn một lượt đi.</li>
                 </ul>
               </li>
             </ul>
@@ -99,7 +99,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
             <ul className="space-y-3 mb-2">
               <li>
                 <div className='font-bold'>Tầm xa khắc chế Tầm gần:</div>
-                <p className="ml-4">Cung thủ có lợi thế lớn khi đối đầu với các quân đi chậm và đánh gần như Kiếm sĩ và Lính búa vì có thể tấn công từ khoảng cách an toàn.</p>
+                <p className="ml-4">Cung thủ có lợi thế lớn khi đối đầu với các quân đi chậm và đánh gần như Kiếm sĩ và Lính rìu vì có thể tấn công từ khoảng cách an toàn.</p>
               </li>
               <li>
                 <div className='font-bold'>Cơ động khắc chế Tầm xa:</div>
@@ -107,7 +107,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
               </li>
               <li>
                 <div className='font-bold'>Phòng thủ khắc chế Kỹ năng:</div>
-                <p className="ml-4">Khiên thủ khi đang ở thế thủ sẽ vô hiệu hóa hoàn toàn các kỹ năng tấn công của Cung thủ, Kiếm sĩ, và Lính búa. Đây là bức tường vững chắc để chống lại các đòn tấn công đặc biệt.</p>
+                <p className="ml-4">Khiên thủ khi đang ở thế thủ sẽ vô hiệu hóa hoàn toàn các kỹ năng tấn công của Cung thủ, Kiếm sĩ, và Lính rìu. Đây là bức tường vững chắc để chống lại các đòn tấn công đặc biệt.</p>
               </li>
               <li>
                 <div className='font-bold'>Hy sinh khắc chế Kẻ tấn công:</div>
@@ -115,7 +115,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
               </li>
               <li>
                 <div className='font-bold'>Sát thương lan khắc chế Co cụm:</div>
-                <p className="ml-4">Lính búa cực kỳ mạnh khi đối phương dàn quân đứng gần nhau. Kỹ năng vung búa của nó có thể quét sạch nhiều quân cờ trong một lượt, trừng phạt lối chơi co cụm.</p>
+                <p className="ml-4">Lính rìu cực kỳ mạnh khi đối phương dàn quân đứng gần nhau. Kỹ năng vung rìu của nó có thể quét sạch nhiều quân cờ trong một lượt, trừng phạt lối chơi co cụm.</p>
               </li>
             </ul>
             <p><strong>Kiếm sĩ</strong> là quân cờ linh hoạt, không quá mạnh về mặt nào nhưng có thể đối phó tốt trong nhiều tình huống tầm gần, đặc biệt là khi áp sát được Cung thủ thì cứ thế ép Cung thủ vào tường và tiêu diệt.</p>

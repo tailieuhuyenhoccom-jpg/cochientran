@@ -8,7 +8,7 @@ export enum PieceType {
   Hero = 'hero',       // Hiệp sĩ
   Horseman = 'horseman', // Kỵ binh
   Archer = 'archer',     // Cung thủ
-  Axeman = 'axeman',     // Lính búa
+  Axeman = 'axeman',     // Lính rìu
   Bomber = 'bomber',     // Lính cảm tử
   ShieldBearer = 'shieldbearer', // Khiên thủ
 }

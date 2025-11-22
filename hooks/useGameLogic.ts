@@ -268,7 +268,8 @@ export const useGameLogic = () => {
 
     const capturedPiece = board[to.row][to.col];
 
-    if (capturedPiece?.type === PieceType.Bomber) {
+    // Fix: Bomber only explodes if it is NOT evolved
+    if (capturedPiece?.type === PieceType.Bomber && !capturedPiece.isEvolved) {
         // First, show the attacker moving onto the square
         const intermediateBoard = produce(board, draft => {
             const pieceToMove = draft[from.row][from.col];

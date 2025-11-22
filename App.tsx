@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Board from './components/Board';
 import GameInfo from './components/GameInfo';
@@ -32,17 +33,59 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-sans">
        <style>{`
-        @keyframes evolved-glow {
-          0%, 100% {
-            filter: drop-shadow(0 0 5px #fde047) drop-shadow(0 0 8px #fde047);
-          }
-          50% {
-            filter: drop-shadow(0 0 8px #facc15) drop-shadow(0 0 12px #facc15);
-          }
+        /* --- General Animations --- */
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
         }
-        .animate-evolved-glow {
-          animation: evolved-glow 1.5s ease-in-out infinite;
+        .animate-bounce-slow {
+          animation: bounce-slow 2s ease-in-out infinite;
         }
+
+        /* --- Role Specific Animations --- */
+        
+        /* Horseman: Rhythmic galloping motion */
+        @keyframes gallop {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          25% { transform: translateY(-3px) rotate(-2deg); }
+          50% { transform: translateY(0) rotate(0deg); }
+          75% { transform: translateY(-1px) rotate(1deg); }
+        }
+        .animate-gallop {
+          animation: gallop 1.2s ease-in-out infinite;
+        }
+
+        /* Archer & Flag: Gentle swaying/aiming */
+        @keyframes sway {
+          0%, 100% { transform: rotate(-3deg); }
+          50% { transform: rotate(3deg); }
+        }
+        .animate-sway {
+          animation: sway 3s ease-in-out infinite;
+        }
+
+        /* Axeman & Hero: Heavy breathing/ready stance */
+        @keyframes breath {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        .animate-breath {
+          animation: breath 2.5s ease-in-out infinite;
+        }
+
+        /* Bomber: Unstable vibration */
+        @keyframes ticking {
+          0% { transform: translate(0, 0); }
+          25% { transform: translate(1px, 1px); }
+          50% { transform: translate(-1px, -1px); }
+          75% { transform: translate(1px, -1px); }
+          100% { transform: translate(0, 0); }
+        }
+        .animate-ticking {
+          animation: ticking 0.2s linear infinite;
+        }
+
+        /* --- Evolution Effects --- */
 
         @keyframes pulse-bright {
           0%, 100% {
@@ -58,36 +101,44 @@ const App: React.FC = () => {
           animation: pulse-bright 2s infinite;
         }
 
-        @keyframes defend-shield-pulse {
+        /* --- Shield Defense Effect --- */
+
+        @keyframes shield-pulse {
           0%, 100% {
-            transform: translate(-50%, -50%) scale(1.1);
             opacity: 0.6;
-            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.5), inset 0 0 10px 2px rgba(96, 165, 250, 0.7);
+            transform: scale(1);
+            box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4);
           }
           50% {
-            transform: translate(-50%, -50%) scale(1.25);
-            opacity: 0.8;
-            box-shadow: 0 0 25px 10px rgba(59, 130, 246, 0.7), inset 0 0 15px 4px rgba(96, 165, 250, 1);
+            opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.7);
           }
         }
-        .is-defending::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, rgba(96, 165, 250, 0.3) 80%);
-            border: 2px solid rgba(147, 197, 253, 0.8); /* blue-300 */
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            animation: defend-shield-pulse 1.8s ease-in-out infinite;
+        .animate-shield-pulse {
+            animation: shield-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        /* Spark effect for bomber */
+        @keyframes spark-flash {
+           0%, 100% { opacity: 0; transform: scale(0.5); }
+           50% { opacity: 1; transform: scale(1.2); }
+        }
+        .animate-spark {
+            animation: spark-flash 0.5s ease-out infinite;
         }
       `}</style>
       <header className="mb-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-amber-400 tracking-wider">Cờ Chiến Trận</h1>
-        <p className="text-gray-400">
+        <h1 className="text-4xl md:text-5xl font-bold text-amber-400 tracking-wider drop-shadow-lg">Cờ Chiến Trận</h1>
+        <p className="text-gray-400 text-sm mt-1">
           Bản quyền thuộc về{' '}
           <a
             href="https://www.facebook.com/tailieuhuyenhoc.nguyenthanhdat/"
